@@ -35,3 +35,19 @@ export async function addToList(item) {
         throw new Error('Cant add your item');
     }
 }
+
+
+export async function deleteFromList(id) {
+    try {
+        const connection = await dbConnection();
+        const [deleteItem] = await connection.execute('DELETE FROM groceryList WHERE id = ?',
+            [id]
+        );
+
+        connection.end();
+
+        return { id: id }
+    } catch (err) {
+        throw new Error('Cant delete item');
+    }
+}
