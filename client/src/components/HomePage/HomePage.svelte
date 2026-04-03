@@ -7,18 +7,24 @@ onMount(async () => {
     const data = await response.json();
 
     groceryList = data.groceryList; 
+    console.log(groceryList);
 });
 
 let itemName = '';
-async function handleSubmit(e) {
-    e.preventDefault();
-
+async function handleSubmit() {
     const res = await fetch('http://localhost:8080/api/list', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ itemName })
+    });
+}
+
+
+async function deleteItem(id) {
+    const res = await fetch(`http://localhost:8080/api/list/${id}`, {
+        method: 'DELETE'
     });
 }
 
@@ -38,7 +44,7 @@ async function handleSubmit(e) {
 
 <ul>
 {#each groceryList as list}
-<li>{list.item}</li> <button type="submit">slet</button>
+<li>{list.item}</li> <button on:click={() => deleteItem(list.id)} type="button">slet</button>
 {/each}
 </ul>
 
