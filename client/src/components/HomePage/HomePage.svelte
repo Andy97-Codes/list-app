@@ -7,8 +7,8 @@ onMount(async () => {
     const data = await response.json();
 
     groceryList = data.groceryList; 
-    console.log(groceryList);
 });
+
 
 let itemName = '';
 async function handleSubmit() {
@@ -29,6 +29,21 @@ async function deleteItem(id) {
 }
 
 
+let editItemName = '';
+async function updateItem(id) {
+    const res = await fetch(`http://localhost:8080/api/list/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ editItemName })
+    });
+}
+
+
+let editingID = null;
+
+
 </script>
 
 
@@ -44,7 +59,14 @@ async function deleteItem(id) {
 
 <ul>
 {#each groceryList as list}
-<li>{list.item}</li> <button on:click={() => deleteItem(list.id)} type="button">slet</button>
+{#if editingID === list.id}
+    <input bind:value={editItemName} type="text" id="editItemName" name="editItemName" required>
+    <button on:click={() => updateItem(list.id)} type="button">Save</button>
+{:else}
+<li>{list.item}</li> 
+<button on:click={() => deleteItem(list.id)} type="button">Delete</button> 
+<button on:click={() => editingID = list.id} type="button">Edit</button>
+{/if}
 {/each}
 </ul>
 

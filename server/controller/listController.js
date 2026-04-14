@@ -5,7 +5,6 @@ export async function getList() {
     try {
         
         const connection = await dbConnection();
-
         const [listOfGroceries] = await connection.execute('SELECT * FROM grocerylist');
         
         connection.end();
@@ -18,12 +17,10 @@ export async function getList() {
 }
 
 
-
 export async function addToList(item) {
     try {
         
         const connection = await dbConnection();
-        
         const [updateList] = await connection.execute('INSERT INTO groceryList (item) VALUES (?)',
             [item.itemName]
          );
@@ -49,5 +46,21 @@ export async function deleteFromList(id) {
         return { id: id }
     } catch (err) {
         throw new Error('Cant delete item');
+    }
+}
+
+
+export async function updateItemFromList(id, editItem) {
+    try {
+        const connection = await dbConnection();
+        const [updateItem] = await connection.execute('UPDATE groceryList SET item = ? WHERE id = ?',
+            [editItem.editItemName, id]
+        );
+
+        connection.end();
+
+        return { name: editItem.editItemName, id: id }
+    } catch (err) {
+        throw new Error('Cant update item');
     }
 }
