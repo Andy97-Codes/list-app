@@ -21,7 +21,7 @@ router.post('/list', async (req, res) => {
 router.delete('/list/:id', async (req, res) => {
     const id = req.params.id;
     const itemToDelete = await deleteFromList(id);
-    res.send(itemToDelete);
+    res.status(200).send(itemToDelete);
 });
 
 
@@ -29,7 +29,7 @@ router.put('/list/:id', async (req, res) => {
     const id = req.params.id;
     const editItem = req.body;
     const itemToUpdate = await updateItemFromList(id, editItem);
-    res.send(itemToUpdate);
+    res.status(200).send(itemToUpdate)
 });
 
 
