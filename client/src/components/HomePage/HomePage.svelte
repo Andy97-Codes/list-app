@@ -1,12 +1,17 @@
 <script>
 import { onMount } from "svelte";
 
+
 let groceryList = [];
-onMount(async () => {
+async function fetchListData() {
     const response = await fetch('http://localhost:8080/api/list');
     const data = await response.json();
 
     groceryList = data.groceryList; 
+  };
+
+onMount(() => {
+    fetchListData();
 });
 
 
@@ -26,6 +31,9 @@ async function deleteItem(id) {
     const res = await fetch(`http://localhost:8080/api/list/${id}`, {
         method: 'DELETE'
     });
+    if(res.ok) {
+        fetchListData();
+    }
 }
 
 
@@ -38,12 +46,13 @@ async function updateItem(id) {
         },
         body: JSON.stringify({ editItemName })
     });
+    if(res.ok) {
+        fetchListData();
+    }
 }
 
 
 let editingID = null;
-
-
 </script>
 
 
@@ -53,7 +62,7 @@ let editingID = null;
 <form on:submit={handleSubmit}>
     <label for="itemName">Add item</label><br>
     <input bind:value={itemName} type="text" id="itemName" name="itemName" required>
-    <button type="submit">Tilføj</button> 
+    <button type="submit">Add</button> 
 </form>    
 
 
@@ -61,11 +70,12 @@ let editingID = null;
 {#each groceryList as list}
 {#if editingID === list.id}
     <input bind:value={editItemName} type="text" id="editItemName" name="editItemName" required>
-    <button on:click={() => updateItem(list.id)} type="button">Save</button>
+    <button on:click={() => { updateItem(list.id); editingID = null; editItemName = ''; }} type="button">Save</button>
+    <button on:click={() => editingID = null }>Cancel</button>
 {:else}
-<li>{list.item}</li> 
-<button on:click={() => deleteItem(list.id)} type="button">Delete</button> 
-<button on:click={() => editingID = list.id} type="button">Edit</button>
+   <li>{list.item}</li> 
+    <button on:click={() => deleteItem(list.id)} type="button">Delete</button> 
+    <button on:click={() => editingID = list.id} type="button">Edit</button>
 {/if}
 {/each}
 </ul>
