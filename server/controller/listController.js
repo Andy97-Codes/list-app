@@ -12,7 +12,7 @@ export async function getList() {
         return { groceryList: listOfGroceries }
     } catch (err) {
     console.error('DB fejl:', err);
-    return { status: 500, body: { succes: false, message: 'kan ikke hente listen' } }
+    return { status: 500, body: { succes: false, message: 'Cant load the list' } }
     }   
 }
 

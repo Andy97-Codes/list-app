@@ -1,14 +1,19 @@
 <script>
 import { onMount } from "svelte";
+import { Toaster, toast } from 'svelte-sonner';
+
+
+const apiURL = import.meta.env.VITE_DB_HOST_URL;
 
 
 let groceryList = [];
 async function fetchListData() {
-    const response = await fetch('http://localhost:8080/api/list');
+    const response = await fetch(`${apiURL}/api/list`);
     const data = await response.json();
 
     groceryList = data.groceryList; 
-  };
+  }
+
 
 onMount(() => {
     fetchListData();
@@ -17,29 +22,41 @@ onMount(() => {
 
 let itemName = '';
 async function handleSubmit() {
-    const res = await fetch('http://localhost:8080/api/list', {
+    const res = await fetch(`${apiURL}/api/list`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ itemName })
     });
+    if(res.ok) {
+        toast.success('Item added to your list!');
+    } else {
+        toast.error('couldnt add your item, please try again');
+    }
 }
 
 
 async function deleteItem(id) {
-    const res = await fetch(`http://localhost:8080/api/list/${id}`, {
+    const res = await fetch(`${apiURL}/api/list/${id}`, {
         method: 'DELETE'
     });
     if(res.ok) {
         fetchListData();
+        toast.success('Your item was deleted correctly!');
+    } else {
+        toast.error('server did not respond, please try again');
     }
 }
 
 
 let editItemName = '';
 async function updateItem(id) {
-    const res = await fetch(`http://localhost:8080/api/list/${id}`, {
+    if(!editItemName) {
+        toast.error('please write something before saving');
+        return;
+    }
+    const res = await fetch(`${apiURL}/api/list/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -47,7 +64,11 @@ async function updateItem(id) {
         body: JSON.stringify({ editItemName })
     });
     if(res.ok) {
+        editingID = null;
         fetchListData();
+        toast.success('Your item is updated!');
+    } else {
+    toast.error('something went wrong, please try again');
     }
 }
 
@@ -58,6 +79,7 @@ let editingID = null;
 
 
 <main>
+<Toaster />
 
 <form on:submit={handleSubmit}>
     <label for="itemName">Add item</label><br>
@@ -69,8 +91,8 @@ let editingID = null;
 <ul>
 {#each groceryList as list}
 {#if editingID === list.id}
-    <input bind:value={editItemName} type="text" id="editItemName" name="editItemName" required>
-    <button on:click={() => { updateItem(list.id); editingID = null; editItemName = ''; }} type="button">Save</button>
+    <input bind:value={editItemName} type="text" id="editItemName" name="editItemName">
+    <button on:click={() => { updateItem(list.id); editItemName = ''; }} type="button">Save</button>
     <button on:click={() => editingID = null }>Cancel</button>
 {:else}
    <li>{list.item}</li> 

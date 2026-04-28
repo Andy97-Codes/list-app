@@ -14,7 +14,7 @@ router.get('/list', async (req, res) => {
 router.post('/list', async (req, res) => {
     const item = req.body;
     const itemName = await addToList(item);
-    res.send(itemName); 
+    res.status(200).send(itemName);
 });
 
 
