@@ -55,7 +55,7 @@ async function updateItem(id) {
     if(!editItemName) {
         toast.error('please write something before saving');
         return;
-    }
+    } 
     const res = await fetch(`${apiURL}/api/list/${id}`, {
         method: 'PUT',
         headers: {

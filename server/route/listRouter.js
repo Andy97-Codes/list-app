@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getList, addToList, deleteFromList, updateItemFromList }  from '../controller/listController.js';
+import { validateUserInput } from '../middleware/listMiddleware.js';
 
 
 const router = Router();
@@ -25,7 +26,7 @@ router.delete('/list/:id', async (req, res) => {
 });
 
 
-router.put('/list/:id', async (req, res) => {
+router.put('/list/:id', validateUserInput, async (req, res) => {
     const id = req.params.id;
     const editItem = req.body;
     const itemToUpdate = await updateItemFromList(id, editItem);
