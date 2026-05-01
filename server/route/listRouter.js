@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getList, addToList, deleteFromList, updateItemFromList }  from '../controller/listController.js';
-import { validateUserInput } from '../middleware/listMiddleware.js';
+import { validateUserInputForEditItem, validateUserInputForCreateItem, validateItemIdForDelete } from '../middleware/listMiddleware.js';
 
 
 const router = Router();
@@ -12,21 +12,21 @@ router.get('/list', async (req, res) => {
 });
 
 
-router.post('/list', async (req, res) => {
+router.post('/list', validateUserInputForCreateItem, async (req, res) => {
     const item = req.body;
     const itemName = await addToList(item);
     res.status(200).send(itemName);
 });
 
 
-router.delete('/list/:id', async (req, res) => {
+router.delete('/list/:id', validateItemIdForDelete, async (req, res) => {
     const id = req.params.id;
     const itemToDelete = await deleteFromList(id);
     res.status(200).send(itemToDelete);
 });
 
 
-router.put('/list/:id', validateUserInput, async (req, res) => {
+router.put('/list/:id', validateUserInputForEditItem, async (req, res) => {
     const id = req.params.id;
     const editItem = req.body;
     const itemToUpdate = await updateItemFromList(id, editItem);

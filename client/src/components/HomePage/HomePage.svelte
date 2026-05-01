@@ -30,6 +30,7 @@ async function handleSubmit() {
         body: JSON.stringify({ itemName })
     });
     if(res.ok) {
+        fetchListData();
         toast.success('Item added to your list!');
     } else {
         toast.error('couldnt add your item, please try again');
@@ -81,9 +82,9 @@ let editingID = null;
 <main>
 <Toaster />
 
-<form on:submit={handleSubmit}>
+<form on:submit|preventDefault={handleSubmit}>
     <label for="itemName">Add item</label><br>
-    <input bind:value={itemName} type="text" id="itemName" name="itemName" required>
+    <input bind:value={itemName} type="text" id="itemName" name="itemName">
     <button type="submit">Add</button> 
 </form>    
 
